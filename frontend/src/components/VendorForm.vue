@@ -48,7 +48,7 @@
       </div>
       
       <div class="form-actions">
-        <button type="submit" :disabled="vendorStore.loading">
+        <button type="submit" :disabled="vendorStore.loading || success">
           {{ vendorStore.loading ? 'Submitting...' : 'Add Vendor' }}
         </button>
         <div v-if="vendorStore.error" class="error-message">{{ vendorStore.error }}</div>

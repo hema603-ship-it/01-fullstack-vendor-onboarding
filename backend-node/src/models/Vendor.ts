@@ -5,3 +5,7 @@ export interface Vendor {
     email: string;
     partner_type: 'Supplier' | 'Partner';
 }
+
+export interface IRowCount {
+    count: number;
+}
