@@ -127,4 +127,29 @@ describe('VendorForm', () => {
     expect(wrapper.find('.error-message').exists()).toBe(true);
     expect(wrapper.find('.error-message').text()).toBe('Failed to add vendor');
   });
+
+  it('shows error message when email exists while submission', async () => {
+    const wrapper = mount(VendorForm, {
+      global: {
+        plugins: [
+          createTestingPinia({
+            createSpy: vi.fn,
+            initialState: {
+              vendor: { loading: false, error: 'A vendor with this email already exists. Please use a different email address.' }
+            }
+          })
+        ]
+      }
+    });
+    
+    await wrapper.find('#name').setValue('Test Company');
+    await wrapper.find('#contactPerson').setValue('John Test');
+    await wrapper.find('#email').setValue('existing@email.com');
+    await wrapper.find('#partnerType').setValue('Supplier');
+
+    await wrapper.find('form').trigger('submit');
+
+    expect(wrapper.find('.error-message').exists()).toBe(true);
+    expect(wrapper.find('.error-message').text()).toBe('A vendor with this email already exists. Please use a different email address.');
+  });
 });

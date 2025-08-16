@@ -25,13 +25,34 @@ export const useVendorStore = defineStore('vendor', () => {
   async function addVendor(vendor: Vendor) {
     loading.value = true
     error.value = null
-    
+
     try {
       await VendorService.createVendor(vendor)
       // Refresh the vendors list after adding a new vendor
       await fetchVendors()
     } catch (err) {
-      error.value = 'Failed to add vendor. Please try again later.'
+      if((<Error>err).message.includes('email')){
+        error.value =(<Error>err).message;
+      }else {
+      error.value = 'Failed to add vendor. Please try again later.';
+      }
+      console.error(err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function deleteVendor(id: string) {
+    loading.value = true
+    error.value = null
+    
+    try {
+      await VendorService.deleteVendor(id);
+      // Refresh the vendors list after deleting a new vendor
+      await fetchVendors()
+    } catch (err) {
+      error.value = 'Failed to delete vendor. Please try again later.'
       console.error(err)
       throw err
     } finally {
@@ -44,6 +65,7 @@ export const useVendorStore = defineStore('vendor', () => {
     loading,
     error,
     fetchVendors,
-    addVendor
+    addVendor,
+    deleteVendor
   }
 })

@@ -4,6 +4,7 @@ import { createTestingPinia } from '@pinia/testing';
 import VendorList from '../../components/VendorList.vue';
 import { useVendorStore } from '../../stores/vendorStore';
 import type { Vendor } from '../../types/Vendor';
+import { nextTick } from 'vue';
 
 describe('VendorList', () => {
   const mockVendors: Vendor[] = [
@@ -128,7 +129,7 @@ describe('VendorList', () => {
     
     // Check that the table exists and has correct structure
     expect(wrapper.find('.vendors-table').exists()).toBe(true);
-    expect(wrapper.findAll('th').length).toBe(5);
+    expect(wrapper.findAll('th').length).toBe(6);
     expect(wrapper.findAll('tbody tr').length).toBe(2);
     
     // Check content of first row
@@ -138,5 +139,30 @@ describe('VendorList', () => {
     expect(firstRow.findAll('td')[2].text()).toBe('John Test');
     expect(firstRow.findAll('td')[3].text()).toBe('john@testcompany.com');
     expect(firstRow.findAll('td')[4].text()).toBe('Supplier');
+    expect(firstRow.findAll('td')[5].text()).toBe('Delete');
   });
+
+  it('calls deleteVendor when delete button is clicked', async () => {
+    window.confirm = vi.fn(() => true);
+    const wrapper = mount(VendorList, {
+      global: {
+        plugins: [
+          createTestingPinia({
+            createSpy: vi.fn,
+            initialState: {
+              vendor: { loading: false, vendors: mockVendors, error: null }
+            }
+          })
+        ]
+      }
+    });
+    
+    const store = useVendorStore();
+    
+    await wrapper.find('button.vendor-delete').trigger('click');
+
+    expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete the vendor?');
+    expect(store.deleteVendor).toHaveBeenCalledWith(1);
+  });
+
 });

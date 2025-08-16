@@ -2,7 +2,7 @@
   <div class="vendor-list">
     <h2>Vendor List</h2>
     <div v-if="vendorStore.loading">Loading vendors...</div>
-    <div v-else-if="vendorStore.error" class="error">{{ vendorStore.error }}</div>
+    <div v-else-if="vendorStore.error && !vendorStore.error.includes('email') " class="error">{{ vendorStore.error }}</div>
     <div v-else-if="vendorStore.vendors.length === 0" class="no-vendors">No vendors found. Add your first vendor!</div>
     <table v-else class="vendors-table">
       <thead>
@@ -12,6 +12,7 @@
           <th>Contact Person</th>
           <th>Email</th>
           <th>Partner Type</th>
+          <th>&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -21,6 +22,7 @@
           <td>{{ vendor.contact_person }}</td>
           <td>{{ vendor.email }}</td>
           <td>{{ vendor.partner_type }}</td>
+          <td> <button class="vendor-delete" @click="deleteItem(vendor.id)" >Delete</button></td>
         </tr>
       </tbody>
     </table>
@@ -37,6 +39,12 @@ const vendorStore = useVendorStore();
 onMounted(() => {
   vendorStore.fetchVendors();
 });
+
+const deleteItem = async (vendorId) => {
+  if (window.confirm('Are you sure you want to delete the vendor?')) {
+    vendorStore.deleteVendor(vendorId);
+  }
+}
 </script>
 
 <style scoped>
@@ -75,5 +83,19 @@ onMounted(() => {
   padding: 20px;
   text-align: center;
   color: #666;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #45a049;
 }
 </style>
