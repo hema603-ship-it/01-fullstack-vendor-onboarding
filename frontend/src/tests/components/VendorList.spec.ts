@@ -4,7 +4,6 @@ import { createTestingPinia } from '@pinia/testing';
 import VendorList from '../../components/VendorList.vue';
 import { useVendorStore } from '../../stores/vendorStore';
 import type { Vendor } from '../../types/Vendor';
-import { nextTick } from 'vue';
 
 describe('VendorList', () => {
   const mockVendors: Vendor[] = [
